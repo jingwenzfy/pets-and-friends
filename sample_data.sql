@@ -1,11 +1,11 @@
 -- Insert sample data for Employee table
 DELETE FROM Employee;
 INSERT INTO Employee (EmployeeID, FName, MI, LName, DOB, Gender, Email, Phone, Passkey, StreetAddress, Apartment, City, State, ZIP, JoinDate, Dept, Salary, EmployeeType, FullTime) VALUES
-(1, 'Yunhao', NULL, 'Lin', '1980-06-15', 'M', 'john.smith@example.com', '1234567890', 'hashedpass', '123 Elm St', NULL, 'San Jose', 'CA', '95112', '2022-01-10', 'Sales', 70000, 'Manager', 1),
-(2, 'XinWei', NULL, 'Cao', '1985-08-25', 'M', 'alice.brown@example.com', '1234567891', 'hashedpass', '456 Oak St', NULL, 'San Francisco', 'CA', '94107', '2023-02-14', 'Support', 55000, 'Staff', 1),
-(3, 'Qilian', NULL, 'Wu', '1992-09-30', 'M', 'michael.johnson@example.com', '1234567892', 'hashedpass', '789 Pine St', 'Apt 2B', 'Oakland', 'CA', '94607', '2022-05-20', 'IT', 60000, 'Contractor', 0),
-(4, 'Derek', NULL, 'Shih', '1995-12-10', 'M', 'sophia.williams@example.com', '1234567893', 'hashedpass', '101 Maple St', NULL, 'Sacramento', 'CA', '95814', '2023-06-18', 'HR', 75000, 'Manager', 1),
-(5, 'Pratham', NULL, 'Gupta', '1998-03-05', 'M', 'david.jones@example.com', '1234567894', 'hashedpass', '202 Cedar St', NULL, 'San Diego', 'CA', '92101', '2024-02-01', 'Finance', 65000, 'Staff', 1),
+(1, 'Yunhao', NULL, 'Lin', '1980-06-15', 'M', 'yunhao.line@example.com', '1234567890', 'hashedpass', '123 Elm St', NULL, 'San Jose', 'CA', '95112', '2022-01-10', 'Sales', 70000, 'Manager', 1),
+(2, 'XinWei', NULL, 'Cao', '1985-08-25', 'M', 'xinwei.cao@example.com', '1234567891', 'hashedpass', '456 Oak St', NULL, 'San Francisco', 'CA', '94107', '2023-02-14', 'Support', 55000, 'Staff', 1),
+(3, 'Qilian', NULL, 'Wu', '1992-09-30', 'M', 'qilian.wu@example.com', '1234567892', 'hashedpass', '789 Pine St', 'Apt 2B', 'Oakland', 'CA', '94607', '2022-05-20', 'IT', 60000, 'Contractor', 0),
+(4, 'Derek', NULL, 'Shih', '1995-12-10', 'M', 'derek.shih@example.com', '1234567893', 'hashedpass', '101 Maple St', NULL, 'Sacramento', 'CA', '95814', '2023-06-18', 'HR', 75000, 'Manager', 1),
+(5, 'Pratham', NULL, 'Gupta', '1998-03-05', 'M', 'pratham.gupta@example.com', '1234567894', 'hashedpass', '202 Cedar St', NULL, 'San Diego', 'CA', '92101', '2024-02-01', 'Finance', 65000, 'Staff', 1),
 (6, 'Jingwen', NULL, 'Zhang', '2000-05-22', 'F', 'jingwen.zhang@example.com', '9496649129', 'hashedpass', '202 Cedar St', NULL, 'Irvine', 'CA', '92617', '2024-02-01', 'Support', 65000, 'Staff', 1);
 
 
