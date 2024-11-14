@@ -2,169 +2,189 @@
 
 -- Employee information, subclass of Person
 CREATE TABLE IF NOT EXISTS Employee (
-    EmployeeID INTEGER PRIMARY KEY,
-    FName TEXT NOT NULL,
-    MI TEXT CHECK (LENGTH(MI) <= 1), -- Middle Initial, limited to 1 character
-    LName TEXT,
+    EmployeeID INT PRIMARY KEY,
+    FName VARCHAR(50) NOT NULL,
+    MI CHAR(1),
+    LName VARCHAR(50),
     DOB DATE,
-    Gender TEXT CHECK (Gender IN ('M', 'F', 'O')), -- Male, Female, Other
-    Email TEXT UNIQUE NOT NULL,
-    Phone TEXT NOT NULL CHECK (LENGTH(Phone) >= 10), -- Assumes standard phone number length
-    Passkey TEXT NOT NULL, -- Storing as hash recommended
-    StreetAddress TEXT,
-    Apartment TEXT,
-    City TEXT,
-    State TEXT CHECK (LENGTH(State) = 2), -- Standard 2-character US state code
-    ZIP TEXT NOT NULL CHECK (LENGTH(ZIP) = 5), -- Standard 5-digit ZIP code
-    JoinDate DATE NOT NULL,
-    Dept TEXT NOT NULL,
-    Salary REAL CHECK (Salary > 0),
-    EmployeeType TEXT CHECK (EmployeeType IN ('Manager', 'Staff', 'Contractor')), -- Example employee types
+    Gender CHAR,
+    Phone VARCHAR(15),
+    Passkey VARCHAR(100) NOT NULL,
+    StreetAddress VARCHAR(100),
+    Apartment VARCHAR(20),
+    City VARCHAR(50),
+    StateLive CHAR(2),
+    ZIP CHAR(5),
+    JoinDate DATE,
+    Dept VARCHAR(50),
+    Salary DECIMAL(10, 2),
+    EmployeeType VARCHAR(50),
     FullTime BOOLEAN NOT NULL
 );
 
 -- Customer information, subclass of Person
 CREATE TABLE IF NOT EXISTS Customer (
-    CustomerID INTEGER PRIMARY KEY,
-    FName TEXT NOT NULL,
-    MI TEXT CHECK (LENGTH(MI) <= 1), -- Middle Initial, limited to 1 character
-    LName TEXT,
+    CustomerID INT PRIMARY KEY,
+    FName VARCHAR(50) NOT NULL,
+    MI CHAR(1),
+    LName VARCHAR(50),
     DOB DATE,
-    Gender TEXT CHECK (Gender IN ('M', 'F', 'O')), -- Male, Female, Other
-    Email TEXT UNIQUE NOT NULL,
-    Phone TEXT NOT NULL CHECK (LENGTH(Phone) >= 10), -- Assumes standard phone number length
-    Passkey TEXT NOT NULL, -- Storing as hash recommended
-    StreetAddress TEXT,
-    Apartment TEXT,
-    City TEXT,
-    State TEXT CHECK (LENGTH(State) = 2), -- Standard 2-character US state code
-    ZIP TEXT NOT NULL CHECK (LENGTH(ZIP) = 5), -- Standard 5-digit ZIP code
-    JoinDate DATE NOT NULL,
-    LoyaltyPoints INTEGER DEFAULT 0 CHECK (LoyaltyPoints >= 0)
+    Gender CHAR(1),
+    Phone VARCHAR(15),
+    Passkey VARCHAR(100) NOT NULL,
+    StreetAddress VARCHAR(100),
+    Apartment VARCHAR(20),
+    City VARCHAR(50),
+    StateLive CHAR(2),
+    ZIP CHAR(5),
+    JoinDate DATE,
+    LoyaltyPoints INT
 );
 
 -- Orders placed by customers, associated with employees
 CREATE TABLE IF NOT EXISTS OrderPlaced (
-    OrderID INTEGER PRIMARY KEY,
-    CustomerID INTEGER NOT NULL,
-    EmployeeID INTEGER,
+    OrderID INT,
+    CustomerID INT NOT NULL,
+    EmployeeID INT,
     OrderDate DATE NOT NULL,
-    OrderStatus TEXT CHECK (OrderStatus IN ('Pending', 'Shipped', 'Delivered', 'Canceled')),
+    OrderStatus VARCHAR(20),
+    PRIMARY KEY (OrderID, CustomerID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
 );
 
 -- Subscription orders that renew periodically
 CREATE TABLE IF NOT EXISTS SubscriptionBox (
-    OrderID INTEGER PRIMARY KEY,
-    StartDate DATE NOT NULL,
+    OrderID INT PRIMARY KEY,
+    StartDate DATE,
     EndDate DATE,
-    Frequency TEXT CHECK (Frequency IN ('Weekly', 'Monthly', 'Yearly')),
+    Frequency VARCHAR(20),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
 
 -- Orders that are not subscription-based
 CREATE TABLE IF NOT EXISTS RegularOrder (
-    OrderID INTEGER PRIMARY KEY,
+    OrderID INT PRIMARY KEY,
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
 
 -- Pets associated with customers
 CREATE TABLE IF NOT EXISTS Pet (
-    PetID INTEGER PRIMARY KEY,
-    CustomerID INTEGER NOT NULL,
+    PetID INT,
+    CustomerID INT NOT NULL,
     PetDOB DATE,
-    PetGender TEXT CHECK (PetGender IN ('M', 'F', 'O')),
+    PetGender CHAR(1),
+    PRIMARY KEY (PetID, CustomerID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 -- Shopping cart for each customer
 CREATE TABLE IF NOT EXISTS Shopping_Cart (
-    ShoppingCartID INTEGER PRIMARY KEY,
-    CustomerID INTEGER NOT NULL,
+    ShoppingCartID INT PRIMARY KEY,
+    CustomerID INT NOT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 -- Products available in the store
 CREATE TABLE IF NOT EXISTS Product (
-    ProductID INTEGER PRIMARY KEY,
-    ProductName TEXT NOT NULL,
-    Brand TEXT,
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100) NOT NULL,
+    Brand VARCHAR(50),
+    Category VARCHAR(50),
     ProductDescription TEXT,
-    UnitPrice REAL NOT NULL CHECK (UnitPrice > 0)
+    UnitPrice DECIMAL(10, 2)
 );
 
 -- Inventory information for products
 CREATE TABLE IF NOT EXISTS Inventory (
-    InventoryID INTEGER PRIMARY KEY,
-    ProductID INTEGER NOT NULL,
-    MaxCapacity INTEGER CHECK (MaxCapacity BETWEEN 0 AND 200),
-    UnitCost REAL NOT NULL CHECK (UnitCost > 0),
-    CurrInventory INTEGER CHECK (CurrInventory BETWEEN 0 AND 200),
+    InventoryID INT,
+    ProductID INT NOT NULL,
+    MaxCapacity INT,
+    UnitCost DECIMAL(10, 2),
+    CurrInventory INT,
+    PRIMARY KEY (InventoryID, ProductID),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 -- Supplier information for products
 CREATE TABLE IF NOT EXISTS Supplier (
-    SupplierID INTEGER PRIMARY KEY,
-    SupplierName TEXT NOT NULL,
-    SupplierEmail TEXT UNIQUE NOT NULL,
-    SupplierPhone TEXT CHECK (LENGTH(SupplierPhone) >= 10),
-    ProductID INTEGER,
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(100) NOT NULL,
+    SupplierEmail VARCHAR(100),
+    SupplierPhone VARCHAR(15),
+    ProductID INT,
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 -- Product reviews from customers
 CREATE TABLE IF NOT EXISTS Review (
-    ReviewID INTEGER PRIMARY KEY,
-    ProductID INTEGER NOT NULL,
-    ReviewDate DATE NOT NULL,
-    Rating INTEGER CHECK (Rating BETWEEN 1 AND 5), -- Rating scale from 1 to 5
-    ReviewContent TEXT,
+    ReviewID INT,
+    ProductID INT NOT NULL,
+    ReviewDate DATE,
+    Rating INT CHECK (Rating BETWEEN 1 AND 5),
+    ReviewDescription TEXT,
+    PRIMARY KEY (ReviewID, ProductID),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 -- Shipment details for each order
 CREATE TABLE IF NOT EXISTS Shipment (
-    ShipmentID INTEGER PRIMARY KEY,
-    TrackingNum TEXT UNIQUE,
-    Carrier TEXT,
-    OrderID INTEGER NOT NULL,
+    ShipmentID INT,
+    TrackingNum VARCHAR(50) UNIQUE,
+    Carrier VARCHAR(50),
+    OrderID INT NOT NULL,
+    PRIMARY KEY (ShipmentID, OrderID),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
 
 -- Transactions recording payment information
 CREATE TABLE IF NOT EXISTS Transac (
-    TransactionID INTEGER PRIMARY KEY,
-    PaymentMethod TEXT CHECK (PaymentMethod IN ('Credit Card', 'PayPal', 'Bank Transfer', 'Cash')),
-    TransactionDatetime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Amount REAL NOT NULL CHECK (Amount >= 0),
-    TransactionStatus TEXT CHECK (TransactionStatus IN ('Completed', 'Pending', 'Failed')),
-    CustomerID INTEGER NOT NULL,
+    TransactionID INT,
+    PaymentMethod VARCHAR(50),
+    TransactionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Amount DECIMAL(10, 2) NOT NULL,
+    TransactionStatus VARCHAR(20),
+    CustomerID INT NOT NULL,
+    PRIMARY KEY (TransactionID, CustomerID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+CREATE TABLE IF NOT EXISTS Email_Customer (
+    CustomerID INT NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    PRIMARY KEY (CustomerID, Email),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+CREATE TABLE IF NOT EXISTS Category_Product (
+    ProductID INT NOT NULL,
+    Category VARCHAR(50) NOT NULL,
+    PRIMARY KEY (ProductID, Category),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 -- Junction tables for many-to-many relationships
 CREATE TABLE IF NOT EXISTS Shopping_Cart_Product (
-    ShoppingCartID INTEGER NOT NULL,
-    ProductID INTEGER NOT NULL,
+    ShoppingCartID INT NOT NULL,
+    ProductID INT NOT NULL,
+    PRIMARY KEY (ShoppingCartID, ProductID),
     FOREIGN KEY (ShoppingCartID) REFERENCES Shopping_Cart(ShoppingCartID),
-    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
-    PRIMARY KEY (ShoppingCartID, ProductID)
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 CREATE TABLE IF NOT EXISTS Product_Order (
-    OrderID INTEGER NOT NULL,
-    ProductID INTEGER NOT NULL,
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Product_quantity INT,
+    PRIMARY KEY (OrderID, ProductID),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID),
-    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
-    PRIMARY KEY (OrderID, ProductID)
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 CREATE TABLE IF NOT EXISTS Order_Employee (
-    EmployeeID INTEGER NOT NULL,
-    OrderID INTEGER NOT NULL,
+    EmployeeID INT NOT NULL,
+    OrderID INT NOT NULL,
+    PRIMARY KEY (EmployeeID, OrderID),
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
-    FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID),
-    PRIMARY KEY (EmployeeID, OrderID)
+    FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
