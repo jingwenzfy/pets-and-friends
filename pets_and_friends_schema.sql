@@ -1,51 +1,49 @@
 -- Fictional Client Pets&Friends Database Schema
 
--- Employee information, subclass of Person
-CREATE TABLE IF NOT EXISTS Employee (
-    EmployeeID INT PRIMARY KEY,
-    FName VARCHAR(50) NOT NULL,
+-- Person table, superclass
+CREATE TABLE IF NOT EXISTS Person (
+    PersonID PRIMARY KEY,
+    FName VARCHAR(50),
     MI CHAR(1),
     LName VARCHAR(50),
     DOB DATE,
     Gender CHAR,
     Phone VARCHAR(15),
-    Passkey VARCHAR(100) NOT NULL,
+    Passkey VARCHAR(100),
     StreetAddress VARCHAR(100),
     Apartment VARCHAR(20),
     City VARCHAR(50),
     StateLive CHAR(2),
     ZIP CHAR(5),
-    JoinDate DATE,
+    JoinDate DATE
+);
+
+-- Employee information, subclass of Person
+CREATE TABLE IF NOT EXISTS Employee (
+    EmployeeID,
+    PersonID, 
     Dept VARCHAR(50),
     Salary DECIMAL(10, 2),
     EmployeeType VARCHAR(50),
-    FullTime BOOLEAN NOT NULL
+    FullTime BOOLEAN, 
+    PRIMARY KEY (PersonID, EmployeeID),
+    FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
 );
 
 -- Customer information, subclass of Person
 CREATE TABLE IF NOT EXISTS Customer (
-    CustomerID INT PRIMARY KEY,
-    FName VARCHAR(50) NOT NULL,
-    MI CHAR(1),
-    LName VARCHAR(50),
-    DOB DATE,
-    Gender CHAR(1),
-    Phone VARCHAR(15),
-    Passkey VARCHAR(100) NOT NULL,
-    StreetAddress VARCHAR(100),
-    Apartment VARCHAR(20),
-    City VARCHAR(50),
-    StateLive CHAR(2),
-    ZIP CHAR(5),
-    JoinDate DATE,
-    LoyaltyPoints INT
+    CustomerID,
+    PersonID, 
+    LoyaltyPoints INT, 
+    PRIMARY KEY (PersonID, CustomerID),
+    FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
 );
 
 -- Orders placed by customers, associated with employees
 CREATE TABLE IF NOT EXISTS OrderPlaced (
-    OrderID INT,
-    CustomerID INT NOT NULL,
-    EmployeeID INT,
+    OrderID,
+    CustomerID NOT NULL,
+    EmployeeID,
     OrderDate DATE NOT NULL,
     OrderStatus VARCHAR(20),
     PRIMARY KEY (OrderID, CustomerID),
@@ -55,7 +53,7 @@ CREATE TABLE IF NOT EXISTS OrderPlaced (
 
 -- Subscription orders that renew periodically
 CREATE TABLE IF NOT EXISTS SubscriptionBox (
-    OrderID INT PRIMARY KEY,
+    OrderID PRIMARY KEY,
     StartDate DATE,
     EndDate DATE,
     Frequency VARCHAR(20),
@@ -64,14 +62,14 @@ CREATE TABLE IF NOT EXISTS SubscriptionBox (
 
 -- Orders that are not subscription-based
 CREATE TABLE IF NOT EXISTS RegularOrder (
-    OrderID INT PRIMARY KEY,
+    OrderID PRIMARY KEY,
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
 
 -- Pets associated with customers
 CREATE TABLE IF NOT EXISTS Pet (
-    PetID INT,
-    CustomerID INT NOT NULL,
+    PetID,
+    CustomerID NOT NULL,
     PetDOB DATE,
     PetGender CHAR(1),
     PRIMARY KEY (PetID, CustomerID),
@@ -80,14 +78,14 @@ CREATE TABLE IF NOT EXISTS Pet (
 
 -- Shopping cart for each customer
 CREATE TABLE IF NOT EXISTS Shopping_Cart (
-    ShoppingCartID INT PRIMARY KEY,
-    CustomerID INT NOT NULL,
+    ShoppingCartID PRIMARY KEY,
+    CustomerID NOT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 -- Products available in the store
 CREATE TABLE IF NOT EXISTS Product (
-    ProductID INT PRIMARY KEY,
+    ProductID PRIMARY KEY,
     ProductName VARCHAR(100) NOT NULL,
     Brand VARCHAR(50),
     Category VARCHAR(50),
@@ -97,8 +95,8 @@ CREATE TABLE IF NOT EXISTS Product (
 
 -- Inventory information for products
 CREATE TABLE IF NOT EXISTS Inventory (
-    InventoryID INT,
-    ProductID INT NOT NULL,
+    InventoryID,
+    ProductID NOT NULL,
     MaxCapacity INT,
     UnitCost DECIMAL(10, 2),
     CurrInventory INT,
@@ -108,18 +106,18 @@ CREATE TABLE IF NOT EXISTS Inventory (
 
 -- Supplier information for products
 CREATE TABLE IF NOT EXISTS Supplier (
-    SupplierID INT PRIMARY KEY,
+    SupplierID PRIMARY KEY,
     SupplierName VARCHAR(100) NOT NULL,
     SupplierEmail VARCHAR(100),
     SupplierPhone VARCHAR(15),
-    ProductID INT,
+    ProductID,
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 -- Product reviews from customers
 CREATE TABLE IF NOT EXISTS Review (
-    ReviewID INT,
-    ProductID INT NOT NULL,
+    ReviewID,
+    ProductID NOT NULL,
     ReviewDate DATE,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     ReviewDescription TEXT,
@@ -129,35 +127,35 @@ CREATE TABLE IF NOT EXISTS Review (
 
 -- Shipment details for each order
 CREATE TABLE IF NOT EXISTS Shipment (
-    ShipmentID INT,
+    ShipmentID,
     TrackingNum VARCHAR(50) UNIQUE,
     Carrier VARCHAR(50),
-    OrderID INT NOT NULL,
+    OrderID NOT NULL,
     PRIMARY KEY (ShipmentID, OrderID),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
 );
 
 -- Transactions recording payment information
 CREATE TABLE IF NOT EXISTS Transac (
-    TransactionID INT,
+    TransactionID,
     PaymentMethod VARCHAR(50),
     TransactionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Amount DECIMAL(10, 2) NOT NULL,
     TransactionStatus VARCHAR(20),
-    CustomerID INT NOT NULL,
+    CustomerID NOT NULL,
     PRIMARY KEY (TransactionID, CustomerID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE IF NOT EXISTS Email_Customer (
-    CustomerID INT NOT NULL,
+    CustomerID NOT NULL,
     Email VARCHAR(100) NOT NULL,
     PRIMARY KEY (CustomerID, Email),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE IF NOT EXISTS Category_Product (
-    ProductID INT NOT NULL,
+    ProductID NOT NULL,
     Category VARCHAR(50) NOT NULL,
     PRIMARY KEY (ProductID, Category),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
@@ -165,16 +163,16 @@ CREATE TABLE IF NOT EXISTS Category_Product (
 
 -- Junction tables for many-to-many relationships
 CREATE TABLE IF NOT EXISTS Shopping_Cart_Product (
-    ShoppingCartID INT NOT NULL,
-    ProductID INT NOT NULL,
+    ShoppingCartID NOT NULL,
+    ProductID NOT NULL,
     PRIMARY KEY (ShoppingCartID, ProductID),
     FOREIGN KEY (ShoppingCartID) REFERENCES Shopping_Cart(ShoppingCartID),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
 );
 
 CREATE TABLE IF NOT EXISTS Product_Order (
-    OrderID INT NOT NULL,
-    ProductID INT NOT NULL,
+    OrderID NOT NULL,
+    ProductID NOT NULL,
     Product_quantity INT,
     PRIMARY KEY (OrderID, ProductID),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID),
@@ -182,8 +180,8 @@ CREATE TABLE IF NOT EXISTS Product_Order (
 );
 
 CREATE TABLE IF NOT EXISTS Order_Employee (
-    EmployeeID INT NOT NULL,
-    OrderID INT NOT NULL,
+    EmployeeID NOT NULL,
+    OrderID NOT NULL,
     PRIMARY KEY (EmployeeID, OrderID),
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
     FOREIGN KEY (OrderID) REFERENCES OrderPlaced(OrderID)
