@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the dataset
-file_path = '/Users/steve/Desktop/raw data/combined/Last_Cleaned_Data_Sets/With Missing Data.csv'
+file_path = 'file location'
 data_with_missing = pd.read_csv(file_path)
 
 # Identify locations of missing values
